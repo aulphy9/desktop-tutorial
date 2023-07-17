@@ -1,0 +1,31 @@
+Enter a string: 
+
+true
+
+Enter a string: a
+
+true
+
+Enter a string: 5
+
+true
+
+Enter a string: Otto
+
+true
+
+Enter a string: racecar
+
+true 
+
+Enter a string: A man, a plan, a canal, Panama!
+
+true
+
+Enter a string: David 
+
+false 
+
+Enter a string: t2h3i4s!!!s 34234i123h12t
+
+true
