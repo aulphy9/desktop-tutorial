@@ -2,30 +2,30 @@ Enter a string:
 
 true
 
-Enter a string: a
+Enter a string: 
 
 true
 
-Enter a string: 5
+Enter a string: 
 
 true
 
-Enter a string: Otto
+Enter a string:
 
 true
 
-Enter a string: racecar
+Enter a string: 
 
 true 
 
-Enter a string: A man, a plan, a canal, Panama!
+Enter a string: 
 
 true
 
-Enter a string: David 
+Enter a string: 
 
 false 
 
-Enter a string: t2h3i4s!!!s 34234i123h12t
+Enter a string: 
 
 true
