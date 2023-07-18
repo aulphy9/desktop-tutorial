@@ -1,11 +1,17 @@
 package cp213;
+import java.util.Scanner;
 
 public class Palindrome {
 
     public static void main(String[] args) {
-        String s = "t2h3i4s!!!s 34234i123h12t";
+        Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+    	System.out.print("Enter a string: ");
+		String s = myObj.nextLine();
+		System.out.println();
+		myObj.close();
         Boolean result = isPalindrome(s);
-        System.out.print(result);
+        System.out.println(result);
+		System.out.println();
     }
 
     /**
