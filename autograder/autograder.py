@@ -1,78 +1,105 @@
 import os
-import subprocess
+import cProfile
+import pstats
 
-def run_code_file(code_file, input_file):
-    # Determine the file type
-    file_extension = os.path.splitext(code_file)[1].lower()
+with cProfile.Profile() as pr:
 
-    if file_extension == ".py":
-        # Run Python code file
-        command = f"python {code_file} < {input_file}"
-    elif file_extension == ".java":
-        # Compile and run Java code file
+    def run_code_file(code_file, input_line):
+        # Determine the file type
+        file_extension = os.path.splitext(code_file)[1].lower()
+
+
         class_name = os.path.splitext(os.path.basename(code_file))[0]
-        source_directory = os.path.dirname(code_file)
-        class_file = os.path.join(source_directory, f"{class_name}.class")
 
-        # Compile the Java code explicitly
-        subprocess.run(["javac", code_file], check=True)
+        if file_extension == ".py":
+            original_dir=os.getcwd()
+            # Run Python code file
+            command = f"python {class_name}.py"
+            #extract class directory
+            class_dir=os.path.dirname(code_file)
+            #set that to cd
+            os.chdir(class_dir)
+        elif file_extension == ".java":
+            # Compile and run Java code file
+            command = f"javac {code_file}"
+            os.system(command)
+            #keep original directory
+            original_dir=os.getcwd()
+            #extract class directory
+            class_dir=os.path.dirname(code_file)
+            #set that to cd
+            os.chdir(class_dir)
+            # Execute the command and capture the output
+            command= f"java {class_name}"
+        else:
+            print(f"Unsupported file type: {file_extension}")
+            return None
+        
+        with open("temp.txt", "w") as temp_file:
+            temp_file.write(input_line)
+        
+        command +=f" < temp.txt"
+        output = os.popen(command).read()
 
-        # Run the Java code file
-        process = subprocess.Popen(["java", "-cp", source_directory, class_name+".java"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        with open(input_file, 'r') as f:
-            output, error = process.communicate(input=f.read().encode())
-        output = output.decode().strip()
-    else:
-        print(f"Unsupported file type: {file_extension}")
-        return None
+        os.remove("temp.txt")
+        #switch back to original directory
+        os.chdir(original_dir)
 
-    return output
 
-def compare_output(output, expected_output_file):
-    with open(expected_output_file, 'r') as f:
-        expected_output = f.readlines()
+        return output
 
-    output_lines = output.strip().split('\n')
-    num_expected_lines = len(expected_output)
-    num_output_lines = len(output_lines)
-    num_correct_lines = 0
+    def compare_output(output, expected_output_file):
+        with open(expected_output_file, 'r') as f:
+            expected_output = [line for line in f.readlines() if line.strip()]
 
-    for i in range(min(num_expected_lines, num_output_lines)):
-        if output_lines[i].strip() == expected_output[i].strip():
-            num_correct_lines += 1
+        output_lines = [line for line in output.strip().split('\n') if line.strip()]
+        num_expected_lines = len(expected_output)
+        num_output_lines = len(output_lines)
+        num_correct_lines = 0
 
-    correctness_percentage = (num_correct_lines / num_expected_lines) * 100
-    return correctness_percentage
+        for i in range(min(num_expected_lines, num_output_lines)):
+            if output_lines[i].strip() == expected_output[i].strip():
+                num_correct_lines += 1
 
-def evaluate_project(project_path, input_folder, expected_output_folder):
-    src_path = os.path.join(project_path, "src\\cp213")
+        correctness_percentage = (num_correct_lines / num_expected_lines) * 100
+        return correctness_percentage
 
-    for root, _, files in os.walk(src_path):
-        for file in files:
-            code_file = os.path.join(root, file)
-            expected_output_file = os.path.join(expected_output_folder, file.replace('.py', '.txt').replace('.java', '.txt'))
+    def evaluate_project(project_path, input_file, expected_output_folder):
+        src_path = os.path.join(project_path, "src")
 
-            if os.path.isfile(expected_output_file):
-                input_file = os.path.join(input_folder, file.replace('.py', '.txt').replace('.java', '.txt'))
-                if os.path.isfile(input_file):
-                    with open(input_file, 'r') as f:
-                        input_lines = f.readlines()
+        num_files=0
+        correctness_percentage=0
+        for root, _, files in os.walk(src_path):
+            for file in files:
+                code_file = os.path.join(root, file)
+                expected_output_file = os.path.join(expected_output_folder, file.replace('.py', '.txt').replace('.java', '.txt'))
 
-                    for input_line in input_lines:
-                        output = run_code_file(code_file, input_file)
-                        if output is not None:
-                            mark = compare_output(output, expected_output_file)
-                            print(f"{file} - Input: {input_line.strip()} - Mark: {mark}%")
+                if os.path.isfile(expected_output_file):
+                    output=''
+                    with open(input_file, "r") as f:
+                        for line in f:
+                            temp = run_code_file(code_file, line)
+                            if temp is not None:
+                                output+=temp
+                    correctness_percentage += compare_output(output, expected_output_file)
+                    num_files+=1
+            print(f"{file} - Student Score: {(correctness_percentage/num_files):.2f}%")
 
-def main():
-    project_folder = "autograder\\test_code_files"
-    input_folder = "autograder\\test_input_files"
-    expected_output_folder = "autograder\\test_output_files"
+    def main():
+        project_folder = "autograder\\test_code_files"
+        input_file = "autograder\\test_input_files\\Palindrome.txt"
+        expected_output_folder = "autograder\\test_output_files"
 
-    for project in os.listdir(project_folder):
-        project_path = os.path.join(project_folder, project)
-        if os.path.isdir(project_path):
-            evaluate_project(project_path, input_folder, expected_output_folder)
+        for project in os.listdir(project_folder):
+            project_path = os.path.join(project_folder, project)
+            if os.path.isdir(project_path):
+                evaluate_project(project_path, input_file, expected_output_folder)
 
-if __name__ == "__main__":
-    main()
+    if __name__ == "__main__":
+        main()
+
+stats = pstats.Stats(pr)
+stats.sort_stats(pstats.SortKey.TIME)
+# Now you have two options, either print the data or save it as a file
+stats.print_stats() # Print The Stats
+stats.dump_stats("File/path.prof") # Saves the data in a file, can me used to see the data visuall
