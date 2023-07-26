@@ -1,27 +1,262 @@
-from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
+import customtkinter as ctk
+import ctypes
+from PIL import Image
+
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("dark-blue")
+
+#function to retrieve zip file of submissions from users local files
+def check_zip_file():
+    global selected_zip_path
+    file_path = ctk.filedialog.askopenfilename(filetypes=[("ZIP Files", "*.zip")])
+    if not file_path.endswith(".zip"):
+        MessageBox = ctypes.windll.user32.MessageBoxW
+        MessageBox(None, 'You must select a zip file', 'Error', 0)
+    else:
+        selected_zip_path = file_path
+        print("Selected ZIP file:", selected_zip_path)
+
+#function to retrieve txt file of sample input from users local files
+def get_sample_input():
+    global selected_input_path
+    file_path = ctk.filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+    if not file_path.endswith(".txt"):
+        MessageBox = ctypes.windll.user32.MessageBoxW
+        MessageBox(None, 'You must select a txt file', 'Error', 0)
+    else:
+        selected_input_path = file_path
+        print("Selected input file path: ", selected_input_path)
+
+#function to retrieve txt file of expected output from users local files
+def get_expected_output():
+    global expected_output_path
+    file_path = ctk.filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+    if not file_path.endswith(".txt"):
+        MessageBox = ctypes.windll.user32.MessageBoxW
+        MessageBox(None, 'You must select a txt file', 'Error', 0)
+    else:
+        expected_output_path = file_path
+        print("Selected expected output file path: ", expected_output_path)
+
+#function to get location of output folder
+def get_output_location():
+    pass
+
+#function to get location of csv file with student information
+def get_csv_file():
+    pass
+
+#class for final grading screen
+class ThirdLevelWindow(ctk.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("600x500")
+        self.title("Grading: Step 3/3")
+
+        #laurier logo at top (for consistencys sake)
+        laurier_logo3 = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+                                  size=(150, 150))
+        self.hawk_logo = ctk.CTkLabel(self, image=laurier_logo3, text="")  # display image with a CTkLabel
+        self.hawk_logo.pack(pady=10)
+
+        #title of window
+        self.window_title = ctk.CTkLabel(self, text="Select your output folder and CSV template file:", font=("Berline Sans FB", 22))
+        self.window_title.pack()
+        self.window_title.place(x=60,y=180)
+
+        #instructions for output folder and csv file
+        select_output = """Select the location for the resulting output of the marking
+        application in your file explorer."""
+
+        select_csv = """Select the CSV file that holds each students information and upload information.
+        This is downloaded from MyLS in the dropbox submissions section."""
+
+        #labels for selection process
+        self.output_descrip = ctk.CTkLabel(self, text=select_output, font=("Calibri", 22))
+        self.output_descrip.pack()
+        self.output_descrip.place(x=15, y=220)
+
+        #output select and csv location select buttons
+        # self.output_select_button = ctk.CTkButton(self, text="", font=("Calibri", 16), command=get_output_location)
+        # self.output_select_button.pack()
+        # self.output_select_button.place(x=70, y=320)
+
+#class window for getting expected input and output files
+class SecondLevelWindow(ctk.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("600x500")
+        self.title("Grading: Step 2/3")
+        self.third_level_window = None
+
+        #laurier logo at top (for consistencys sake)
+        laurier_logo2 = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+                                  size=(150, 150))
+        self.hawk_logo = ctk.CTkLabel(self, image=laurier_logo2, text="")  # display image with a CTkLabel
+        self.hawk_logo.pack(pady=10)
+
+        #title of the window
+        self.header_title = ctk.CTkLabel(self, text="Select your Sample Input and Expected Output Files:", font=("Berline Sans FB", 22))
+        self.header_title.place(x=45,y=180)
+
+        #text for sample input selection
+        sample_input_txt = """       Select your sample input values 
+        from a txt file on your PC. Must
+        have each different test case on 
+        their own respective lines."""
+
+        #text for expected output selection
+        expected_output_txt = """        Select your expected output for
+        the code to be run from a txt file
+        on your PC."""
+
+        #labels for instructions
+        self.test_cases = ctk.CTkLabel(self, text=sample_input_txt, font=("Calibri", 16))
+        self.test_cases.pack(padx=10)
+        self.test_cases.place(x=15,y=220)
+
+        self.expected_output = ctk.CTkLabel(self, text=expected_output_txt, font=("Calibri", 16))
+        self.expected_output.pack(padx=10)
+        self.expected_output.place(x=285, y=230)
+
+        #buttons to get test case and expected output files
+        self.get_input = ctk.CTkButton(self, text="Select sample input file", command=get_sample_input, width=160, height=35) 
+        self.get_input.place(x=70, y= 320)
+
+        self.get_expected = ctk.CTkButton(self, text="Select expected output file", command=get_expected_output, width=160, height=35)
+        self.get_expected.place(x=340, y=320)
+
+        #button to go to next window
+        self.gotofinalwindow = ctk.CTkButton(self, text="Next step", command=self.open_thirdlevel)
+        self.gotofinalwindow.place(x=450,y=465)
+
+    #function to open up third window to select user input and expected output files
+    def open_thirdlevel(self):
+        self.wm_state('iconic')
+        if self.third_level_window is None or not self.third_level_window.winfo_exists():
+            self.third_level_window = ThirdLevelWindow(self)  # create window if its None or destroyed
+            self.third_level_window.focus()
+        else:
+            self.third_level_window.focus()  # if window exists focus it
+
+#window to select zip file for grading submissions
+class ToplevelWindow(ctk.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("600x500")
+        self.title("Grading: Step 1/3")
+        laurier_logo1 = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+                                  size=(150, 150))
+        self.hawk_logo = ctk.CTkLabel(self, image=laurier_logo1, text="")  # display image with a CTkLabel
+        self.hawk_logo.pack(pady=10)
+        selected_zip_path = ""
+        
+        #zip file select button
+        self.button = ctk.CTkButton(self, text="Select Zip File", command=check_zip_file)
+        self.button.pack(padx=20, pady=20)
+        self.button.place(x=230, y=340)
+
+        #resulting ctklabel from clicking the button above
+        self.resultant_filepath = ctk.CTkLabel(self, text=selected_zip_path, font=("Calibri", 16))
+        self.resultant_filepath.place(x=200, y=400)
+
+        #title of the window
+        self.header_title = ctk.CTkLabel(self, text="Select your MyLS Grading Zip File:", font=("Berline Sans FB", 22))
+        self.header_title.pack()
+        self.header_title.place(x=130,y=180)
+
+        #window description
+        text_zip = """        To start the grading process, hit the download submissions 
+        button on MyLS dropbox submissons page and save the zip file
+        on your PC. Upload it to the autograder by clicking the button 
+        below to select the correct zip file."""
+        self.zip_descrip = ctk.CTkLabel(self, text=text_zip, font=("Calibri", 16), anchor="center")
+        self.zip_descrip.pack(padx=0,pady=0)
+        self.zip_descrip.place(x=65,y=230)
+
+        #button to go to next window
+        self.open_input = ctk.CTkButton(self, text="Next Step", command=self.open_secondlevel)
+        self.open_input.pack(padx=10,pady=10)
+        self.open_input.place(x=450,y=465) #placing next
+    
+        #variable for next window
+        self.second_level_window = None
+
+    #function to open up third window to select user input and expected output files
+    def open_secondlevel(self):
+        self.wm_state('iconic')
+        if self.second_level_window is None or not self.second_level_window.winfo_exists():
+            self.second_level_window = SecondLevelWindow(self)  # create window if its None or destroyed
+            self.second_level_window.focus()
+        else:
+            self.second_level_window.focus()  # if window exists focus it
+        
 
 
-class LoginScreen(GridLayout):
+class App(ctk.CTk):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        #images
+        laurier_logo = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+                                  size=(200, 200))
+        python_logo = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\pylogo.png"),
+                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\pylogo.png"),
+                                  size=(136, 146.9))
+        java_logo = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\javalogo.png"),
+                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\javalogo.png"),
+                                  size=(175, 175))
+        #setting window size
+        self.geometry("800x600")
+        
+        #button to go to zip file selection window
+        self.button_1 = ctk.CTkButton(self, text="Start Grading", command=self.open_toplevel)
+        self.button_1.pack()
+        self.button_1.place(x=650, y=565)
+        
+        #golden hawk logo for fun
+        self.hawk_logo = ctk.CTkLabel(self, image=laurier_logo, text="")  # display image with a CTkLabel
+        self.hawk_logo.pack(pady=10)
 
-    def __init__(self, **kwargs):
-        super(LoginScreen, self).__init__(**kwargs)
-        self.cols = 2
-        self.add_widget(Label(text='User Name'))
-        self.username = TextInput(multiline=False)
-        self.add_widget(self.username)
-        self.add_widget(Label(text='password'))
-        self.password = TextInput(password=True, multiline=False)
-        self.add_widget(self.password)
+        #title under golden hawk logo
+        self.window_name = ctk.CTkLabel(self, text="Hawk Eye Autograder", font=("Berlin Sans FB", 32))
+        self.window_name.pack(pady=10)
+        self.window_name.place(x=250,y=240)
 
+        #description label introducing the app and what it does
+        description = """                     Welcome to the Hawk Eye Autograding platform. This application 
+                        allows you to automate the marking process of Python and Java files
+                        and projects. Simply download MyLearning Space submissions, provide 
+                        your sample input and expected output, and mark all submissions. 
+                        The next few windows will take you through the process. Click the 
+                        start grading button below to begin."""
+        self.title_description = ctk.CTkLabel(self, text=description, font=("Calibri", 16))
+        self.title_description.pack(padx=1)
+        self.title_description.place(x=55, y=285)
 
-class MyApp(App):
+        #python logo
+        self.pylogo = ctk.CTkLabel(self, image=python_logo, text="")  # display image with a CTkLabel
+        self.pylogo.pack(pady=10)
+        self.pylogo.place(x=200, y=420)
 
-    def build(self):
-        return LoginScreen()
+        #python logo
+        self.jlogo = ctk.CTkLabel(self, image=java_logo, text="")  # display image with a CTkLabel
+        self.jlogo.pack(pady=10)
+        self.jlogo.place(x=400, y=400)
+        
+        self.toplevel_window = None
 
+    def open_toplevel(self):
+        self.wm_state('iconic')
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = ToplevelWindow(self)  # create window if its None or destroyed
+            self.toplevel_window.focus()
+        else:
+            self.toplevel_window.focus()  # if window exists focus it
 
-if __name__ == '__main__':
-    MyApp().run()
+app = App()
+app.title("Hawk Eye Grading")
+app.mainloop()
