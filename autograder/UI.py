@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import ctypes
 from PIL import Image
+from autograder import main_function
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
@@ -48,6 +49,7 @@ def grade_submission():
     print(f"Sample input folder {selected_input_path}")
     print(f"Expected output folder: {expected_output_path}")
     print(f"CSV Grading info file: {csv_path}")
+    main_function(selected_zip_path, selected_input_path, expected_output_path, csv_path)
 
 #class for final grading screen
 class ThirdLevelWindow(ctk.CTkToplevel):
@@ -57,8 +59,8 @@ class ThirdLevelWindow(ctk.CTkToplevel):
         self.title("Grading: Step 3/3")
 
         #laurier logo at top (for consistencys sake)
-        laurier_logo3 = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
-                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+        laurier_logo3 = ctk.CTkImage(light_image=Image.open("autograder\images\hawk.png"),
+                                  dark_image=Image.open("autograder\images\hawk.png"),
                                   size=(150, 150))
         self.hawk_logo = ctk.CTkLabel(self, image=laurier_logo3, text="")  # display image with a CTkLabel
         self.hawk_logo.pack(pady=10)
@@ -105,14 +107,14 @@ class SecondLevelWindow(ctk.CTkToplevel):
         self.third_level_window = None
 
         #laurier logo at top (for consistencys sake)
-        laurier_logo2 = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
-                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+        laurier_logo2 = ctk.CTkImage(light_image=Image.open("autograder\images\hawk.png"),
+                                  dark_image=Image.open("autograder\images\hawk.png"),
                                   size=(150, 150))
         self.hawk_logo = ctk.CTkLabel(self, image=laurier_logo2, text="")  # display image with a CTkLabel
         self.hawk_logo.pack(pady=10)
 
         #title of the window
-        self.header_title = ctk.CTkLabel(self, text="Select your Sample Input and Expected Output Files:", font=("Berline Sans FB", 22))
+        self.header_title = ctk.CTkLabel(self, text="Select your Sample Input and Expected Output Folders:", font=("Berline Sans FB", 22))
         self.header_title.place(x=45,y=180)
 
         #text for sample input selection
@@ -136,10 +138,10 @@ class SecondLevelWindow(ctk.CTkToplevel):
         self.expected_output.place(x=285, y=230)
 
         #buttons to get test case and expected output files
-        self.get_input = ctk.CTkButton(self, text="Select sample input file", command=get_sample_input, width=160, height=35) 
+        self.get_input = ctk.CTkButton(self, text="Select sample input folder", command=get_sample_input, width=160, height=35) 
         self.get_input.place(x=70, y= 320)
 
-        self.get_expected = ctk.CTkButton(self, text="Select expected output file", command=get_expected_output, width=160, height=35)
+        self.get_expected = ctk.CTkButton(self, text="Select expected output folder", command=get_expected_output, width=160, height=35)
         self.get_expected.place(x=340, y=320)
 
         #button to go to next window
@@ -161,8 +163,8 @@ class ToplevelWindow(ctk.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.geometry("600x500")
         self.title("Grading: Step 1/3")
-        laurier_logo1 = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
-                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+        laurier_logo1 = ctk.CTkImage(light_image=Image.open("autograder\images\hawk.png"),
+                                  dark_image=Image.open("autograder\images\hawk.png"),
                                   size=(150, 150))
         self.hawk_logo = ctk.CTkLabel(self, image=laurier_logo1, text="")  # display image with a CTkLabel
         self.hawk_logo.pack(pady=10)
@@ -214,17 +216,18 @@ class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         #images
-        laurier_logo = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
-                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\hawk.png"),
+        laurier_logo = ctk.CTkImage(light_image=Image.open("autograder\images\hawk.png"),
+                                  dark_image=Image.open("autograder\images\hawk.png"),
                                   size=(200, 200))
-        python_logo = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\pylogo.png"),
-                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\pylogo.png"),
+        python_logo = ctk.CTkImage(light_image=Image.open("autograder\images\pylogo.png"),
+                                  dark_image=Image.open("autograder\images\pylogo.png"),
                                   size=(136, 146.9))
-        java_logo = ctk.CTkImage(light_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\javalogo.png"),
-                                  dark_image=Image.open("C:\CP317\desktop-tutorial\GUI\images\javalogo.png"),
+        java_logo = ctk.CTkImage(light_image=Image.open("autograder\images\javalogo.png"),
+                                  dark_image=Image.open("autograder\images\javalogo.png"),
                                   size=(175, 175))
         #setting window size
         self.geometry("800x600")
+
         
         #button to go to zip file selection window
         self.button_1 = ctk.CTkButton(self, text="Start Grading", command=self.open_toplevel)

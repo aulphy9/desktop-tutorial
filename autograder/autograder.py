@@ -88,9 +88,9 @@ def compare_output(output, expected_output_file):
     return correctness_percentage
 
 def evaluate_project(project_path, input_folder, expected_output_folder, grades_file):
-    print(project_path)
     split_by_slash=project_path.split("\\")
-    folder_name=split_by_slash[2].split("-")
+    print(split_by_slash)
+    folder_name=split_by_slash[1].split("-")
     last_and_first=folder_name[2].split(" ")
     last_name=last_and_first[2]
     first_name=last_and_first[1]
@@ -138,7 +138,7 @@ def unzip(folder_path):
         print(f"An error occurred: {str(e)}")
         return False
 
-def main(project_folder, input_folder, expected_output_folder, grades_file):
+def main_function(project_folder, input_folder, expected_output_folder, grades_file):
     #project_folder = "autograder\\test_code_files.zip"
     #input_folder = "autograder\\test_input_files"
     #expected_output_folder = "autograder\\test_output_files"
@@ -155,5 +155,5 @@ def main(project_folder, input_folder, expected_output_folder, grades_file):
             evaluate_project(unzipped, input_folder, expected_output_folder, grades_file)
 
 if __name__ == "__main__":
-    main()
+    main_function()
 
