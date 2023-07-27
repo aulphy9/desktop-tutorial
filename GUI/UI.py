@@ -19,32 +19,35 @@ def check_zip_file():
 #function to retrieve txt file of sample input from users local files
 def get_sample_input():
     global selected_input_path
-    file_path = ctk.filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
-    if not file_path.endswith(".txt"):
-        MessageBox = ctypes.windll.user32.MessageBoxW
-        MessageBox(None, 'You must select a txt file', 'Error', 0)
-    else:
-        selected_input_path = file_path
-        print("Selected input file path: ", selected_input_path)
+    file_path = ctk.filedialog.askdirectory()
+    selected_input_path = file_path
+    print("Selected input file path: ", selected_input_path)
 
 #function to retrieve txt file of expected output from users local files
 def get_expected_output():
     global expected_output_path
-    file_path = ctk.filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
-    if not file_path.endswith(".txt"):
-        MessageBox = ctypes.windll.user32.MessageBoxW
-        MessageBox(None, 'You must select a txt file', 'Error', 0)
-    else:
-        expected_output_path = file_path
-        print("Selected expected output file path: ", expected_output_path)
-
-#function to get location of output folder
-def get_output_location():
-    pass
+    file_path = ctk.filedialog.askdirectory()
+    expected_output_path = file_path
+    print("Selected expected output file path: ", expected_output_path)
 
 #function to get location of csv file with student information
 def get_csv_file():
-    pass
+    global csv_path
+    file_path = ctk.filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+    if not file_path.endswith(".csv"):
+        MessageBox = ctypes.windll.user32.MessageBoxW
+        MessageBox(None, 'You must select a csv file', 'Error', 0)
+    else:
+        csv_path = file_path
+        print("Selected csv file path: ", csv_path)
+
+#function that calls autograding software and updates csv file
+def grade_submission():
+    print("---------------------------")
+    print(f"Zip submissions file: {selected_zip_path}")
+    print(f"Sample input folder {selected_input_path}")
+    print(f"Expected output folder: {expected_output_path}")
+    print(f"CSV Grading info file: {csv_path}")
 
 #class for final grading screen
 class ThirdLevelWindow(ctk.CTkToplevel):
@@ -66,21 +69,32 @@ class ThirdLevelWindow(ctk.CTkToplevel):
         self.window_title.place(x=60,y=180)
 
         #instructions for output folder and csv file
-        select_output = """Select the location for the resulting output of the marking
+        select_output = """          Select the location for the
+        resulting output of the marking
         application in your file explorer."""
 
-        select_csv = """Select the CSV file that holds each students information and upload information.
-        This is downloaded from MyLS in the dropbox submissions section."""
+        select_csv = """            Select the CSV file that
+        holds each students information
+        and upload information. This is
+        downloaded from MyLS in the 
+        dropbox submissions section."""
 
         #labels for selection process
-        self.output_descrip = ctk.CTkLabel(self, text=select_output, font=("Calibri", 22))
+        self.output_descrip = ctk.CTkLabel(self, text=select_output, font=("Calibri", 16))
         self.output_descrip.pack()
-        self.output_descrip.place(x=15, y=220)
+        self.output_descrip.place(x=15,y=245)
 
-        #output select and csv location select buttons
-        # self.output_select_button = ctk.CTkButton(self, text="", font=("Calibri", 16), command=get_output_location)
-        # self.output_select_button.pack()
-        # self.output_select_button.place(x=70, y=320)
+        self.csv_select = ctk.CTkLabel(self, text=select_csv, font=("Calibri", 16))
+        self.csv_select.pack()
+        self.csv_select.place(x=290,y=230)
+
+        self.csv_button = ctk.CTkButton(self, text="Select CSV File", command=get_csv_file, width=160, height=35)
+        self.csv_button.pack()
+        self.csv_button.place(x=340, y=340)
+
+        #button to grade the submissions
+        self.grade_submissions = ctk.CTkButton(self, text="Grade submissions", command=grade_submission, width=160, height=35)
+        self.grade_submissions.place(x=450,y=465)
 
 #class window for getting expected input and output files
 class SecondLevelWindow(ctk.CTkToplevel):
@@ -155,7 +169,7 @@ class ToplevelWindow(ctk.CTkToplevel):
         selected_zip_path = ""
         
         #zip file select button
-        self.button = ctk.CTkButton(self, text="Select Zip File", command=check_zip_file)
+        self.button = ctk.CTkButton(self, text="Select Zip File", command=check_zip_file, width=160, height=35)
         self.button.pack(padx=20, pady=20)
         self.button.place(x=230, y=340)
 
