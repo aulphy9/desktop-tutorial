@@ -64,12 +64,12 @@ class ThirdLevelWindow(ctk.CTkToplevel):
 
     #function that calls autograding software and updates csv file
     def grade_submission(self):
-        print("-----------------------")
-        print(csv_path)
-        print(selected_input_path)
-        print(selected_zip_path)
-        print(expected_output_path)
-        #main_function(selected_zip_path, selected_input_path, expected_output_path, csv_path)
+        #print("-----------------------")
+        #print(csv_path)
+        #print(selected_input_path)
+        #print(selected_zip_path)
+        #print(expected_output_path)
+        main_function(selected_zip_path, selected_input_path, expected_output_path, csv_path)
 
 #class window for getting expected input and output files
 class SecondLevelWindow(ctk.CTkToplevel):
@@ -126,7 +126,7 @@ class SecondLevelWindow(ctk.CTkToplevel):
         global selected_input_path
         file_path = ctk.filedialog.askdirectory()
         selected_input_path = file_path
-        print("Selected input file path: ", selected_input_path)
+        #print("Selected input file path: ", selected_input_path)
         self.display_input = ctk.CTkLabel(self, text=f"Sample input folder path: {selected_input_path}", font=("Calibri", 14))
         self.display_input.pack()
         self.display_input.place(x=75, y=360)
@@ -136,7 +136,7 @@ class SecondLevelWindow(ctk.CTkToplevel):
         global expected_output_path
         file_path = ctk.filedialog.askdirectory()
         expected_output_path = file_path
-        print("Selected expected output file path: ", expected_output_path)
+        #print("Selected expected output file path: ", expected_output_path)
         self.display_output = ctk.CTkLabel(self, text=f"Expected output folder path: {expected_output_path}", font=("Calibri", 14))
         self.display_output.pack()
         self.display_output.place(x=75, y=380)
@@ -206,7 +206,7 @@ class ToplevelWindow(ctk.CTkToplevel):
             selected_zip_path = file_path
             self.test_label = ctk.CTkLabel(self, text=f"Selected zip path: {selected_zip_path}", font=("Calibri", 14))
             self.test_label.place(x=90, y=400)
-            print("Selected ZIP file:", selected_zip_path)
+            #print("Selected ZIP file:", selected_zip_path)
 
     #function to open up third window to select user input and expected output files
     def open_secondlevel(self):

@@ -79,7 +79,7 @@ def compare_output(output, expected_output_file):
     num_expected_lines = len(expected_output)
     num_output_lines = len(output_lines)
     num_correct_lines = 0
-    print("in compare output")
+
     for i in range(min(num_expected_lines, num_output_lines)):
         if output_lines[i].strip() == expected_output[i].strip():
             num_correct_lines += 1
@@ -89,14 +89,14 @@ def compare_output(output, expected_output_file):
 
 def evaluate_project(project_path, input_folder, expected_output_folder, grades_file):
     split_by_slash=project_path.split("\\")
-    print(split_by_slash)
     folder_name=split_by_slash[1].split("-")
+   
     last_and_first=folder_name[2].split(" ")
     last_name=last_and_first[2]
     first_name=last_and_first[1]
-    src_path = os.path.join(project_path, "src")
-    print(last_name)
-    print(first_name)
+    src_path = os.path.join(project_path, folder_name[-1][1:], "src")
+    #print(src_path)
+    print(f"Grading {first_name} {last_name}")
     
 
     num_files=0
@@ -116,18 +116,24 @@ def evaluate_project(project_path, input_folder, expected_output_folder, grades_
                             output+=temp
                 correctness_percentage += compare_output(output, expected_output_file)
                 num_files+=1
+                print(f"{file} Student Score: {(correctness_percentage/num_files):.2f}%")
         insert_grade(grades_file, last_name, first_name, correctness_percentage)
-        print(f"{file} - Student Score: {(correctness_percentage/num_files):.2f}%")
+        
+
 
 def unzip(folder_path):
-    zip_directory = os.path.dirname(folder_path)
+    zip_directory = folder_path[:-4]
+
+    #make the folder if it does not exist
+    if not os.path.exists(zip_directory):
+        os.makedirs(zip_directory)
 
     # Extract the contents of the ZIP file
     try:
         with zipfile.ZipFile(folder_path, 'r') as zip_ref:
             zip_ref.extractall(zip_directory)
 
-        print("Unzip successful.")
+        #print("Unzip successful.")
         return folder_path[:-4]
 
     except zipfile.BadZipFile:
@@ -139,20 +145,18 @@ def unzip(folder_path):
         return False
 
 def main_function(project_folder, input_folder, expected_output_folder, grades_file):
-    #project_folder = "autograder\\test_code_files.zip"
-    #input_folder = "autograder\\test_input_files"
-    #expected_output_folder = "autograder\\test_output_files"
-    #grades_file="autograder\\CP-317-C Shell For SW Testing_GradesExport_2023-07-26-19-17.csv"
 
     unzipped_project=unzip(project_folder)
-    print(unzipped_project)
+
+    os.remove(os.path.join(unzipped_project, "index.html"))
 
     for project in os.listdir(unzipped_project):
         project_path = os.path.join(unzipped_project, project)
         unzipped=unzip(project_path)
-        print(unzipped)
         if os.path.isdir(unzipped):
             evaluate_project(unzipped, input_folder, expected_output_folder, grades_file)
+    
+    print("Grading Complete")
 
 if __name__ == "__main__":
     main_function()
