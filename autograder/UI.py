@@ -26,9 +26,9 @@ class ThirdLevelWindow(ctk.CTkToplevel):
         self.hawk_logo.pack(pady=10)
 
         #title of window
-        self.window_title = ctk.CTkLabel(self, text="Select your output folder and CSV template file:", font=("Berline Sans FB", 22))
+        self.window_title = ctk.CTkLabel(self, text="Select student CSV template file:", font=("Berline Sans FB", 22))
         self.window_title.pack()
-        self.window_title.place(x=60,y=180)
+        self.window_title.place(x=130,y=180)
 
         #instructions to select csv file
         select_csv = """        Select the CSV file that holds each students information
@@ -88,7 +88,7 @@ class SecondLevelWindow(ctk.CTkToplevel):
 
         #title of the window
         self.header_title = ctk.CTkLabel(self, text="Select your Sample Input and Expected Output Folders:", font=("Berline Sans FB", 22))
-        self.header_title.place(x=45,y=180)
+        self.header_title.place(x=35,y=180)
 
         #text for sample input selection
         sample_input_txt = """       Select your sample input folder 
@@ -152,11 +152,6 @@ class SecondLevelWindow(ctk.CTkToplevel):
 
 #window to select zip file for grading submissions
 class ToplevelWindow(ctk.CTkToplevel):
-    global selected_input_path
-    global selected_zip_path
-    global csv_path
-    global expected_output_path
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry("600x500")

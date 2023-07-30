@@ -1,0 +1,9 @@
+Requirements file to run this application:
+1. Must have Python 3.11 installed on your PC
+2. Must have Customtkinter installed on your python wheel
+    Command - "pip install customtkinter"
+3. Must have Pillow installed on your python wheel
+    Command - "pip install pillow"
+4. Must have pands installed on your python wheel
+    Command - "pip install pandas"
+5. Must have access to MyLS grading functions as professor/TA
