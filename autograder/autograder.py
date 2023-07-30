@@ -148,7 +148,8 @@ def main_function(project_folder, input_folder, expected_output_folder, grades_f
 
     unzipped_project=unzip(project_folder)
 
-    os.remove(os.path.join(unzipped_project, "index.html"))
+    if os.path.exists(os.path.join(unzipped_project, "index.html")):
+        os.remove(os.path.join(unzipped_project, "index.html"))
 
     for project in os.listdir(unzipped_project):
         project_path = os.path.join(unzipped_project, project)
